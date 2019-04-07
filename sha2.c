@@ -189,6 +189,14 @@ typedef u_int64_t sha2_word64;	/* Exactly 8 bytes */
 #define MEMCPY_BCOPY(d,s,l)	bcopy((s), (d), (l))
 #endif
 
+#if HAVE_MEMSET_S
+#undef MEMSET_BZERO
+#define MEMSET_BZERO(p, l)      memset_s((p), (l), 0, (l))
+#elif HAVE_EXPLICIT_BZERO
+#undef MEMSET_BZERO
+#define MEMSET_BZERO(p, l)      explicit_bzero((p), (l))
+#endif
+
 
 /*** THE SIX LOGICAL FUNCTIONS ****************************************/
 /*
