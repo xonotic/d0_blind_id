@@ -12,6 +12,7 @@ AC_ARG_WITH(tfm, AS_HELP_STRING([--with-tfm], [Use tfm (TomsFastMath) instead of
 AM_CONDITIONAL(WITH_OPENSSL, [test x"$with_openssl" != xno])
 AM_CONDITIONAL(WITH_TOMMATH, [test x"$with_tommath" != xno])
 AM_CONDITIONAL(WITH_TOMSFASTMATH, [test x"$with_tfm" != xno])
+AC_CHECK_FUNCS(explicit_bzero memset_s)
 
 AS_IF([test x"$with_tommath" != xno],
 	[AC_SEARCH_LIBS(mp_init, tommath, ,
