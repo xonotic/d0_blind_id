@@ -12,6 +12,7 @@ AC_ARG_WITH(tfm, AS_HELP_STRING([--with-tfm], [Use tfm (TomsFastMath) instead of
 AM_CONDITIONAL(WITH_OPENSSL, [test x"$with_openssl" != xno])
 AM_CONDITIONAL(WITH_TOMMATH, [test x"$with_tommath" != xno])
 AM_CONDITIONAL(WITH_TOMSFASTMATH, [test x"$with_tfm" != xno])
+AC_CHECK_FUNCS(explicit_bzero memset_s)
 
 AS_IF([test x"$with_tommath" != xno],
 	[AC_SEARCH_LIBS(mp_init, tommath, ,
@@ -20,7 +21,7 @@ AS_IF([test x"$with_tommath" != xno],
 		[AC_SEARCH_LIBS(fp_ident, tfm, ,
 			[AC_MSG_ERROR([libtfm not found, see http://www.libtom.org/, or try --without-tfm])])],
 		[AS_IF([test x"$with_openssl" != xno],
-			[AC_SEARCH_LIBS(BN_init, crypto, ,
+			[AC_SEARCH_LIBS(BN_new, crypto, ,
 				[AC_MSG_ERROR([OpenSSL not found, see http://www.openssl.org/, or try --without-openssl])])],
 			[AC_SEARCH_LIBS(__gmpz_init, gmp, ,
 				[AC_MSG_ERROR([GNU MP not found, see http://gmplib.org/, or try --with-openssl])])])])])
