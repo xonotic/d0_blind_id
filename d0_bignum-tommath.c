@@ -207,7 +207,6 @@ d0_bignum_t *d0_iobuf_read_bignum(d0_iobuf_t *buf, d0_bignum_t *bignum)
 
 ssize_t d0_bignum_export_unsigned(const d0_bignum_t *bignum, void *buf, size_t bufsize)
 {
-	unsigned long bufsize_;
 	unsigned long count;
 	count = tm(unsigned_bin_size)((tm(int) *) &bignum->z);
 	if(count > bufsize)
@@ -219,7 +218,7 @@ ssize_t d0_bignum_export_unsigned(const d0_bignum_t *bignum, void *buf, size_t b
 		buf += bufsize - count;
 	}
 	tm(to_unsigned_bin)((tm(int) *) &bignum->z, buf);
-	return bufsize;
+	return count;
 }
 
 d0_bignum_t *d0_bignum_import_unsigned(d0_bignum_t *bignum, const void *buf, size_t bufsize)
