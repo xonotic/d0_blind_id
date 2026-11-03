@@ -899,15 +899,16 @@ D0_WARN_UNUSED_RESULT D0_BOOL d0_blind_id_authenticate_with_private_id_challenge
 	d0_iobuf_t *out = NULL;
 	unsigned char hashbuf[2048];
 	size_t sz;
-
 	USINGTEMPS(); // temps: temp0 order, temp0 signature check
+
+	// Receiving a peer-supplied modulus is insecure and no longer supported.
+	if(recv_modulus)
+		return 0;
+
 	if(is_first)
 	{
 		REPLACING(schnorr_g_to_s); REPLACING(schnorr_H_g_to_s_signature);
-		if(recv_modulus)
-			REPLACING(schnorr_G);
-		else
-			USING(schnorr_G);
+		USING(schnorr_G);
 	}
 	else
 	{
@@ -922,16 +923,6 @@ D0_WARN_UNUSED_RESULT D0_BOOL d0_blind_id_authenticate_with_private_id_challenge
 
 	if(is_first)
 	{
-		if(recv_modulus)
-		{
-			CHECK_ASSIGN(ctx->schnorr_G, d0_iobuf_read_bignum(in, ctx->schnorr_G));
-			CHECK(d0_bignum_cmp(ctx->schnorr_G, zero) > 0);
-			CHECK(d0_bignum_cmp(ctx->schnorr_G, ctx->rsa_n) < 0);
-			LOCKTEMPS();
-			CHECK(d0_dl_get_order(temp0, ctx->schnorr_G));
-			CHECK(d0_bignum_cmp(temp0, zero) > 0);
-			UNLOCKTEMPS();
-		}
 		CHECK_ASSIGN(ctx->schnorr_g_to_s, d0_iobuf_read_bignum(in, ctx->schnorr_g_to_s));
 		CHECK(d0_bignum_cmp(ctx->schnorr_g_to_s, zero) >= 0);
 		CHECK(d0_bignum_cmp(ctx->schnorr_g_to_s, ctx->schnorr_G) < 0);
@@ -1235,15 +1226,16 @@ D0_WARN_UNUSED_RESULT D0_BOOL d0_blind_id_sign_with_private_id_verify_internal(d
 	unsigned char *convbuf = NULL;
 	unsigned char hashbuf[2048];
 	size_t sz;
-
 	USINGTEMPS(); // temps: 0 sig^e 2 g^s 3 g^-s 4 order
+
+	// Receiving a peer-supplied modulus is insecure and no longer supported.
+	if(recv_modulus)
+		return 0;
+
 	if(is_first)
 	{
 		REPLACING(schnorr_g_to_s); REPLACING(schnorr_H_g_to_s_signature);
-		if(recv_modulus)
-			REPLACING(schnorr_G);
-		else
-			USING(schnorr_G);
+		USING(schnorr_G);
 	}
 	else
 	{
@@ -1256,12 +1248,6 @@ D0_WARN_UNUSED_RESULT D0_BOOL d0_blind_id_sign_with_private_id_verify_internal(d
 
 	if(is_first)
 	{
-		if(recv_modulus)
-		{
-			CHECK_ASSIGN(ctx->schnorr_G, d0_iobuf_read_bignum(in, ctx->schnorr_G));
-			CHECK(d0_bignum_cmp(ctx->schnorr_G, zero) > 0);
-			CHECK(d0_bignum_cmp(ctx->schnorr_G, ctx->rsa_n) < 0);
-		}
 		CHECK_ASSIGN(ctx->schnorr_g_to_s, d0_iobuf_read_bignum(in, ctx->schnorr_g_to_s));
 		CHECK(d0_bignum_cmp(ctx->schnorr_g_to_s, zero) >= 0);
 		CHECK(d0_bignum_cmp(ctx->schnorr_g_to_s, ctx->schnorr_G) < 0);
