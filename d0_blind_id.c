@@ -382,11 +382,13 @@ D0_WARN_UNUSED_RESULT D0_BOOL d0_longhash_destructive(unsigned char *convbuf, si
 D0_WARN_UNUSED_RESULT D0_BOOL d0_longhash_bignum(const d0_bignum_t *in, unsigned char *outbuf, size_t outbuflen)
 {
 	unsigned char convbuf[1024];
+	ssize_t exported;
 	size_t sz;
 
-	CHECK(d0_bignum_export_unsigned(in, convbuf, sizeof(convbuf)) >= 0);
-	sz = (d0_bignum_size(in) + 7) / 8;
-	CHECK(d0_longhash_destructive(convbuf, sz, outbuf, outbuflen));
+	exported = d0_bignum_export_unsigned(in, convbuf, sizeof(convbuf));
+	CHECK(exported >= 0);
+	sz = exported;
+	CHECK(d0_longhash_destructive(convbuf + sizeof(convbuf) - sz, sz, outbuf, outbuflen));
 	return 1;
 
 fail:
